@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<!-- RegMed — Registro miccional · index_regmed_v1.0.0.html · subir al repo como index.html -->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RegMed v1.0.0</title>
+<meta name="theme-color" content="#0f172a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="RegMed">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f172a; --s1:#1e293b; --s2:#273449; --line:#334155;
+  --tx:#e2e8f0; --tx2:#94a3b8; --tx3:#64748b;
+  --acc:#8fb3d9; --acc2:#5b7fa6;
+  --ok:#4ade80; --warn:#fbbf24; --err:#f87171;
+  --c-oscuro:#b45309; --c-medio:#eab308; --c-claro:#fde68a;
+  --nav-h:64px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:'DM Sans',system-ui,sans-serif;font-size:15px}
+body{min-height:100vh;padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom))}
+button{font-family:inherit;color:inherit;cursor:pointer}
+h1,h2,.bebas{font-family:'Bebas Neue',sans-serif;letter-spacing:.04em;font-weight:400}
+
+/* Header */
+header{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;
+  padding:calc(10px + env(safe-area-inset-top)) 16px 10px;background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;gap:8px}
+.brand h1{margin:0;font-size:28px;color:var(--tx)}
+.brand .ver{font-size:11px;color:var(--tx3)}
+.hdr-r{display:flex;align-items:center;gap:8px}
+#btnInstall{background:var(--acc2);border:0;border-radius:8px;padding:6px 10px;font-size:13px;font-weight:700}
+.pill{font-size:12px;padding:4px 10px;border-radius:999px;background:var(--s1);border:1px solid var(--line);white-space:nowrap;color:var(--tx2)}
+.pill.ok{color:var(--ok);border-color:#166534}
+.pill.pend{color:var(--warn);border-color:#854d0e}
+.pill.err{color:var(--err);border-color:#7f1d1d}
+
+main{max-width:560px;margin:0 auto;padding:16px}
+.tab{display:none}.tab.active{display:block}
+
+/* Registrar */
+.last{text-align:center;margin:8px 0 18px}
+.last .lbl{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--tx3)}
+.last .big{font-family:'Bebas Neue';font-size:46px;line-height:1;margin-top:4px}
+.last .sub{color:var(--tx2);font-size:13px;margin-top:2px}
+.btn-reg{display:block;margin:0 auto;width:min(68vw,250px);aspect-ratio:1;border-radius:50%;
+  border:6px solid var(--line);background:radial-gradient(circle at 35% 30%,#3b5578,#1e3350 70%);
+  box-shadow:0 10px 30px rgba(0,0,0,.45),inset 0 2px 0 rgba(255,255,255,.08);transition:transform .08s}
+.btn-reg:active{transform:scale(.96)}
+.btn-reg span{font-family:'Bebas Neue';font-size:40px;letter-spacing:.08em;color:#e8f1fb}
+.btn-reg small{display:block;font-size:12px;color:var(--acc);letter-spacing:.1em}
+.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:22px 0 14px}
+.mini div{background:var(--s1);border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center}
+.mini b{display:block;font-family:'Bebas Neue';font-size:30px;font-weight:400;line-height:1.05}
+.mini span{font-size:11px;color:var(--tx2)}
+.btn-sec{width:100%;padding:12px;border-radius:12px;border:1px dashed var(--line);background:transparent;color:var(--tx2);font-size:15px}
+.btn-sec:active{background:var(--s1)}
+
+/* Cards */
+.card{background:var(--s1);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+.card h2{margin:0 0 10px;font-size:20px;color:var(--acc)}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kpi{background:var(--s2);border-radius:10px;padding:10px}
+.kpi .v{font-family:'Bebas Neue';font-size:28px;line-height:1.05}
+.kpi .l{font-size:12px;color:var(--tx2)}
+.bar-color{display:flex;height:16px;border-radius:8px;overflow:hidden;background:var(--s2);margin:6px 0}
+.bar-color div{height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--tx2)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px;border:1px solid rgba(0,0,0,.3)}
+.sub-h{font-size:12px;color:var(--tx3);margin:10px 0 2px;text-transform:uppercase;letter-spacing:.08em}
+svg text{font-family:'DM Sans',sans-serif}
+.empty{color:var(--tx3);text-align:center;padding:24px 8px;font-size:14px}
+
+/* Historial */
+.his-top{margin-bottom:12px}
+.day{margin-bottom:14px}
+.day-h{display:flex;justify-content:space-between;align-items:baseline;padding:4px 2px 6px;border-bottom:1px solid var(--line);margin-bottom:4px}
+.day-h b{font-family:'Bebas Neue';font-size:20px;font-weight:400;letter-spacing:.05em}
+.day-h span{font-size:12px;color:var(--tx2)}
+.row{display:flex;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px solid #1f2b3d}
+.row .t{font-size:18px;font-weight:700;min-width:54px}
+.row .c{flex:1;font-size:13px;color:var(--tx2)}
+.row .i{font-size:12px;color:var(--tx3);min-width:64px;text-align:right}
+.row button{background:var(--s1);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:13px}
+.row .demo{font-size:10px;color:var(--warn);border:1px solid #854d0e;border-radius:4px;padding:0 4px;margin-left:4px}
+
+/* Ajustes */
+.cfg-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #1f2b3d;font-size:14px}
+.cfg-row:last-child{border-bottom:0}
+.cfg-row span{color:var(--tx2)}
+.btn{display:block;width:100%;margin-top:8px;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--s2);font-size:15px;font-weight:500}
+.btn:active{filter:brightness(1.2)}
+.btn.pri{background:var(--acc2);border-color:var(--acc2)}
+.btn.dng{color:var(--err)}
+
+/* Nav */
+nav.bnav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;height:calc(var(--nav-h) + env(safe-area-inset-bottom));
+  padding-bottom:env(safe-area-inset-bottom);background:#0b1222;border-top:1px solid var(--line)}
+nav.bnav button{flex:1;background:none;border:0;color:var(--tx3);font-size:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+nav.bnav button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8}
+nav.bnav button.active{color:var(--acc)}
+
+/* Toast */
+.toast{position:fixed;left:12px;right:12px;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 12px);z-index:40;
+  max-width:536px;margin:0 auto;background:#16233a;border:1px solid var(--acc2);border-radius:14px;padding:12px;box-shadow:0 10px 30px rgba(0,0,0,.5);overflow:hidden}
+.toast .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.toast .top b{font-size:15px}
+.toast .undo{background:none;border:1px solid var(--line);border-radius:8px;padding:6px 10px;color:var(--warn);font-weight:700;font-size:13px}
+.toast .prog{position:absolute;left:0;bottom:0;height:3px;background:var(--acc);width:100%}
+.chips{display:flex;gap:8px}
+.chip{flex:1;padding:10px 4px;border-radius:10px;border:2px solid var(--line);background:var(--s1);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px}
+.chip.sel{border-color:var(--tx)}
+.chip .sw{width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,.35)}
+
+/* Modal */
+.modal{position:fixed;inset:0;z-index:50;background:rgba(2,6,23,.75);display:flex;align-items:flex-end;justify-content:center}
+.modal[hidden]{display:none}
+.sheet{width:100%;max-width:560px;background:var(--s1);border-radius:18px 18px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+.sheet h2{margin:0 0 12px;font-size:24px}
+.sheet label{display:block;font-size:12px;color:var(--tx2);margin:12px 0 6px;text-transform:uppercase;letter-spacing:.08em}
+.sheet input[type=datetime-local]{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--tx);font-size:16px;font-family:inherit;color-scheme:dark}
+.quick{display:flex;gap:6px}
+.quick button{flex:1;padding:8px 2px;border-radius:8px;border:1px solid var(--line);background:var(--s2);font-size:13px}
+.sheet .acts{display:flex;gap:8px;margin-top:16px}
+.sheet .acts .btn{margin:0}
+.sheet p{color:var(--tx2);margin:0 0 6px}
+
+/* Clave */
+.clave{position:fixed;inset:0;z-index:60;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+.clave[hidden]{display:none}
+.clave h1{font-size:46px;margin:0}
+.clave p{color:var(--tx2);text-align:center;max-width:320px;font-size:14px}
+.boxes{display:flex;gap:6px;margin:18px 0}
+.boxes input{width:36px;height:48px;text-align:center;font-size:22px;font-weight:700;border-radius:8px;border:1px solid var(--line);background:var(--s1);color:var(--tx);text-transform:uppercase;font-family:inherit}
+.boxes input:focus{outline:2px solid var(--acc);border-color:transparent}
+.clave .msg{min-height:20px;font-size:13px;color:var(--err);margin-bottom:8px;text-align:center}
+.clave .btn{max-width:320px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand"><h1>REGMED</h1><span class="ver" id="hdrVer">v1.0.0</span></div>
+  <div class="hdr-r">
+    <button id="btnInstall" hidden>Instalar</button>
+    <span id="syncPill" class="pill">—</span>
+  </div>
+</header>
+
+<main>
+  <!-- REGISTRAR -->
+  <section id="tab-reg" class="tab active">
+    <div class="last">
+      <div class="lbl">Última</div>
+      <div class="big" id="lastAgo">—</div>
+      <div class="sub" id="lastAt">&nbsp;</div>
+    </div>
+    <button id="btnReg" class="btn-reg" aria-label="Registrar"><span>REGISTRAR</span><small>TOCÁ AL IR AL BAÑO</small></button>
+    <div class="mini">
+      <div><b id="mHoy">0</b><span>hoy</span></div>
+      <div><b id="m24">0</b><span>últimas 24 h</span></div>
+      <div><b id="mInt">—</b><span>intervalo hoy</span></div>
+    </div>
+    <button class="btn-sec" data-manual>+ Carga manual</button>
+  </section>
+
+  <!-- RESUMEN -->
+  <section id="tab-res" class="tab"><div id="resBody"></div></section>
+
+  <!-- HISTORIAL -->
+  <section id="tab-his" class="tab">
+    <div class="his-top"><button class="btn-sec" data-manual>+ Carga manual</button></div>
+    <div id="hisList"></div>
+  </section>
+
+  <!-- AJUSTES -->
+  <section id="tab-cfg" class="tab">
+    <div class="card">
+      <h2>Sincronización</h2>
+      <div class="cfg-row">Estado<span id="cfgEstado">—</span></div>
+      <div class="cfg-row">Pendientes<span id="cfgPend">0</span></div>
+      <div class="cfg-row">Última sync<span id="cfgLast">—</span></div>
+      <div class="cfg-row">Registros activos<span id="cfgTotal">0</span></div>
+      <button class="btn pri" id="btnSync">Sincronizar ahora</button>
+    </div>
+    <div class="card">
+      <h2>Exportar</h2>
+      <button class="btn" id="btnCsv">Descargar CSV (para el médico)</button>
+      <button class="btn" id="btnJson">Descargar backup JSON</button>
+      <button class="btn" id="btnImport">Importar backup JSON</button>
+      <input type="file" id="fileImport" accept="application/json,.json" hidden>
+    </div>
+    <div class="card">
+      <h2>Dispositivo</h2>
+      <div class="cfg-row">Clave<span id="cfgClave">—</span></div>
+      <button class="btn dng" id="btnOlvidar">Cambiar clave</button>
+    </div>
+    <div class="card">
+      <div class="cfg-row">Versión<span id="cfgVer">v1.0.0</span></div>
+      <div class="cfg-row">Datos demo<span>Menú del Sheet → RegMed Admin</span></div>
+    </div>
+  </section>
+</main>
+
+<nav class="bnav">
+  <button data-tab="reg" class="active"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M8 12h8"/></svg>Registrar</button>
+  <button data-tab="res"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Resumen</button>
+  <button data-tab="his"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Historial</button>
+  <button data-tab="cfg"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Ajustes</button>
+</nav>
+
+<!-- Toast post-registro -->
+<div id="toast" class="toast" hidden>
+  <div class="top"><b id="toastTxt">Registrado</b><button class="undo" id="btnUndo">Deshacer</button></div>
+  <div class="chips" id="toastChips"></div>
+  <div class="prog" id="toastProg"></div>
+</div>
+
+<!-- Modal (manual / editar / confirmar) -->
+<div id="modal" class="modal" hidden><div class="sheet" id="modalSheet"></div></div>
+
+<!-- Pantalla de clave -->
+<div id="claveScreen" class="clave" hidden>
+  <h1>REGMED</h1>
+  <p>Ingresá la clave de dispositivo (8 caracteres). La encontrás en el Sheet → <b>RegMed Admin → Ver clave actual</b>.</p>
+  <div class="boxes" id="claveBoxes"></div>
+  <div class="msg" id="claveMsg"></div>
+  <button class="btn pri" id="btnClave">Validar</button>
+</div>
+
+<script>
+/* ======================================================================
+   RegMed v1.0.0 — Registro miccional
+   Local-first + cola de sincronización → GAS/Sheet (fuente de verdad)
+   ====================================================================== */
+const APP_VERSION = '1.0.0';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyuWU_nq5ppysTySSXrOr3Tlxo_-jMWyDW6q48DneZBGm0YKSrStiXd3FB92ORP9YvBWw/exec';
+const TOAST_MS = 6000;
+const FLUSH_DELAY_MS = TOAST_MS + 800;   // se envía al cerrar el toast (así "Deshacer" y color no generan tráfico extra)
+const RETRY_MS = 30000;
+const PULL_MS = 120000;
+const LS = { clave: 'regmed_clave', recs: 'regmed_recs', queue: 'regmed_queue', last: 'regmed_lastsync' };
+const COLORES = {
+  oscuro: { label: 'Oscuro', hex: '#b45309' },
+  medio:  { label: 'Medio',  hex: '#eab308' },
+  claro:  { label: 'Claro',  hex: '#fde68a' }
+};
+
+/* ---------- storage ---------- */
+function lsGet(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
+function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+function lsDel(k) { try { localStorage.removeItem(k); } catch (e) {} }
+
+let recs = lsGet(LS.recs, {});
+let queue = lsGet(LS.queue, []);
+let lastSync = lsGet(LS.last, null);
+let flushing = false, inflight = 0, syncErr = null, flushTimer = null;
+function clave() { return lsGet(LS.clave, ''); }
+function save() { lsSet(LS.recs, recs); lsSet(LS.queue, queue); lsSet(LS.last, lastSync); }
+
+/* ---------- fechas ---------- */
+const pad = n => String(n).padStart(2, '0');
+function isoLocal(d) {
+  const off = -d.getTimezoneOffset(), s = off >= 0 ? '+' : '-', a = Math.abs(off);
+  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' +
+    pad(d.getMinutes()) + ':' + pad(d.getSeconds()) + s + pad(Math.floor(a / 60)) + ':' + pad(a % 60);
+}
+const dayKey = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const hhmm = d => pad(d.getHours()) + ':' + pad(d.getMinutes());
+const startOfDay = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+const DIAS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+function dayLabel(k) {
+  const [y, m, dd] = k.split('-').map(Number); const d = new Date(y, m - 1, dd);
+  const hoy = dayKey(new Date()), ayer = dayKey(new Date(Date.now() - 864e5));
+  const base = DIAS[d.getDay()] + ' ' + pad(dd) + '/' + pad(m);
+  return k === hoy ? 'Hoy · ' + base : k === ayer ? 'Ayer · ' + base : base;
+}
+function fmtMin(m) {
+  if (m == null || isNaN(m)) return '—';
+  m = Math.round(m);
+  if (m < 60) return m + ' min';
+  const h = Math.floor(m / 60), r = m % 60;
+  return h + ' h' + (r ? ' ' + r + ' min' : '');
+}
+function fmtMinShort(m) {
+  if (m == null || isNaN(m)) return '—';
+  m = Math.round(m); if (m < 60) return m + "'";
+  return Math.floor(m / 60) + 'h' + pad(m % 60);
+}
+function uuid() {
+  if (crypto.randomUUID) return crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16);
+  });
+}
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+/* ---------- modelo ---------- */
+function applyOp(map, op) {
+  const r = op.rec;
+  if (op.op === 'add') {
+    if (!map[r.id]) map[r.id] = { id: r.id, fechaHora: r.fechaHora, color: r.color || '', estado: 'activo', modificado: r.modificado };
+    else Object.assign(map[r.id], { fechaHora: r.fechaHora, color: r.color || '', modificado: r.modificado });
+  } else if (op.op === 'update') {
+    const x = map[r.id];
+    if (x) { if (r.fechaHora) x.fechaHora = r.fechaHora; if (r.color !== undefined) x.color = r.color; x.modificado = r.modificado; }
+  } else if (op.op === 'delete') {
+    if (map[r.id]) map[r.id].estado = 'borrado';
+  }
+}
+function doOp(op, delay) {
+  applyOp(recs, op); queue.push(op); save(); renderAll(); scheduleFlush(delay == null ? 400 : delay);
+}
+function activos() {
+  return Object.values(recs).filter(r => r.estado !== 'borrado' && r.fechaHora)
+    .map(r => Object.assign({}, r, { d: new Date(r.fechaHora) }))
+    .filter(r => !isNaN(r.d)).sort((a, b) => a.d - b.d);
+}
+/** índice en cola de un 'add' todavía no enviado para ese id */
+function pendingAddIdx(id) {
+  for (let i = inflight; i < queue.length; i++) if (queue[i].op === 'add' && queue[i].rec.id === id) return i;
+  return -1;
+}
+
+/* ---------- sync ---------- */
+function scheduleFlush(ms) { clearTimeout(flushTimer); flushTimer = setTimeout(flush, ms); }
+
+async function flush() {
+  if (flushing || !clave()) { updSync(); return; }
+  if (!queue.length) { updSync(); return; }
+  flushing = true; inflight = queue.length; syncErr = null; updSync();
+  const ops = queue.slice(0, inflight);
+  let seguir = false;
+  try {
+    const res = await fetch(GAS_URL, {
+      method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ clave: clave(), action: 'batch', ops })
+    });
+    const j = await res.json();
+    if (j.ok) { queue.splice(0, ops.length); lastSync = isoLocal(new Date()); seguir = queue.length > 0; }
+    else if (j.error === 'CLAVE_INVALIDA') { syncErr = 'clave inválida'; pedirClave('La clave cambió. Ingresá la nueva.'); }
+    else syncErr = j.error || 'error';
+  } catch (e) { syncErr = 'sin conexión'; }
+  flushing = false; inflight = 0; save(); updSync();
+  if (seguir) scheduleFlush(800);
+}
+
+async function pull() {
+  if (!clave()) return;
+  try {
+    const res = await fetch(GAS_URL + '?action=list&clave=' + encodeURIComponent(clave()));
+    const j = await res.json();
+    if (j.ok) {
+      const map = {};
+      (j.registros || []).forEach(x => {
+        map[x.id] = { id: x.id, fechaHora: x.fechaHora, color: x.color || '', estado: x.estado || 'activo', modificado: x.modificado, demo: !!x.demo };
+      });
+      queue.forEach(op => applyOp(map, op));   // lo pendiente local manda sobre lo remoto
+      recs = map; lastSync = isoLocal(new Date()); syncErr = null; save(); renderAll();
+    } else if (j.error === 'CLAVE_INVALIDA') { syncErr = 'clave inválida'; pedirClave('La clave cambió. Ingresá la nueva.'); }
+  } catch (e) { syncErr = 'sin conexión'; }
+  updSync();
+}
+
+function updSync() {
+  const p = document.getElementById('syncPill');
+  const n = queue.length;
+  let txt, cls;
+  if (flushing) { txt = '⟳ enviando ' + n; cls = 'pend'; }
+  else if (syncErr) { txt = '⚠ ' + syncErr + (n ? ' (' + n + ')' : ''); cls = 'err'; }
+  else if (n) { txt = '⏳ ' + n + ' pendiente' + (n > 1 ? 's' : ''); cls = 'pend'; }
+  else if (lastSync) { txt = '✓ ' + hhmm(new Date(lastSync)); cls = 'ok'; }
+  else { txt = '—'; cls = ''; }
+  p.textContent = txt; p.className = 'pill ' + cls;
+  document.getElementById('cfgEstado').textContent = syncErr ? syncErr : (n ? 'pendiente' : 'sincronizado');
+  document.getElementById('cfgPend').textContent = n;
+  document.getElementById('cfgLast').textContent = lastSync ? dayLabel(dayKey(new Date(lastSync))).replace('Hoy · ', '') + ' ' + hhmm(new Date(lastSync)) : '—';
+}
+
+/* ---------- registrar + toast ---------- */
+let toastId = null, toastTimer = null;
+function registrar() {
+  const now = new Date(), iso = isoLocal(now), id = uuid();
+  if (navigator.vibrate) navigator.vibrate(40);
+  doOp({ op: 'add', rec: { id, fechaHora: iso, color: '', modificado: iso } }, FLUSH_DELAY_MS);
+  showToast(id, 'Registrado ' + hhmm(now));
+}
+function setColor(id, color, delay) {
+  const iso = isoLocal(new Date());
+  const i = pendingAddIdx(id);
+  if (i >= 0) { queue[i].rec.color = color; queue[i].rec.modificado = iso; applyOp(recs, queue[i]); save(); renderAll(); scheduleFlush(delay == null ? 400 : delay); }
+  else doOp({ op: 'update', rec: { id, color, modificado: iso } }, delay);
+}
+function deshacer(id) {
+  const i = pendingAddIdx(id);
+  if (i >= 0) {  // nunca llegó al servidor: se elimina localmente sin tráfico
+    queue = queue.filter((op, k) => k < inflight || op.rec.id !== id);
+    delete recs[id]; save(); renderAll(); updSync();
+  } else doOp({ op: 'delete', rec: { id, modificado: isoLocal(new Date()) } });
+}
+function chipsHTML(sel) {
+  return Object.keys(COLORES).map(k =>
+    `<button class="chip${sel === k ? ' sel' : ''}" data-color="${k}"><span class="sw" style="background:${COLORES[k].hex}"></span>${COLORES[k].label}</button>`).join('');
+}
+function showToast(id, txt) {
+  toastId = id;
+  const t = document.getElementById('toast');
+  document.getElementById('toastTxt').textContent = txt;
+  const ch = document.getElementById('toastChips');
+  ch.innerHTML = chipsHTML('');
+  t.hidden = false;
+  const prog = document.getElementById('toastProg');
+  prog.style.transition = 'none'; prog.style.width = '100%';
+  requestAnimationFrame(() => requestAnimationFrame(() => { prog.style.transition = 'width ' + TOAST_MS + 'ms linear'; prog.style.width = '0%'; }));
+  clearTimeout(toastTimer); toastTimer = setTimeout(hideToast, TOAST_MS);
+}
+function hideToast() { document.getElementById('toast').hidden = true; toastId = null; clearTimeout(toastTimer); }
+
+/* ---------- modal ---------- */
+function openModal(html) { document.getElementById('modalSheet').innerHTML = html; document.getElementById('modal').hidden = false; }
+function closeModal() { document.getElementById('modal').hidden = true; }
+function dtLocalValue(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T' + hhmm(d); }
+
+function modalRegistro(rec) {  // rec = null → manual
+  const d = rec ? new Date(rec.fechaHora) : new Date();
+  let color = rec ? (rec.color || '') : '';
+  openModal(`
+    <h2>${rec ? 'Editar registro' : 'Carga manual'}</h2>
+    ${rec ? '' : `<label>Fue hace…</label><div class="quick">
+      <button data-hace="10">10'</button><button data-hace="20">20'</button><button data-hace="30">30'</button><button data-hace="60">1 h</button><button data-hace="120">2 h</button></div>`}
+    <label>Fecha y hora</label><input type="datetime-local" id="mFecha" value="${dtLocalValue(d)}" max="${dtLocalValue(new Date())}">
+    <label>Color (opcional)</label><div class="chips" id="mChips">${chipsHTML(color)}</div>
+    <div class="acts"><button class="btn" id="mCancel">Cancelar</button><button class="btn pri" id="mOk">Guardar</button></div>`);
+  const sheet = document.getElementById('modalSheet');
+  sheet.querySelectorAll('[data-hace]').forEach(b => b.onclick = () => {
+    document.getElementById('mFecha').value = dtLocalValue(new Date(Date.now() - b.dataset.hace * 60000));
+  });
+  sheet.querySelector('#mChips').onclick = e => {
+    const b = e.target.closest('.chip'); if (!b) return;
+    color = color === b.dataset.color ? '' : b.dataset.color;
+    sheet.querySelector('#mChips').innerHTML = chipsHTML(color);
+  };
+  sheet.querySelector('#mCancel').onclick = closeModal;
+  sheet.querySelector('#mOk').onclick = () => {
+    const v = document.getElementById('mFecha').value;
+    const nd = new Date(v);
+    if (!v || isNaN(nd)) return;
+    if (nd > new Date(Date.now() + 60000)) { alertModal('La fecha no puede ser futura.'); return; }
+    const iso = isoLocal(nd), mod = isoLocal(new Date());
+    if (rec) {
+      const i = pendingAddIdx(rec.id);
+      if (i >= 0) { Object.assign(queue[i].rec, { fechaHora: iso, color, modificado: mod }); applyOp(recs, queue[i]); save(); renderAll(); scheduleFlush(400); }
+      else doOp({ op: 'update', rec: { id: rec.id, fechaHora: iso, color, modificado: mod } });
+    } else {
+      doOp({ op: 'add', rec: { id: uuid(), fechaHora: iso, color, modificado: mod } });
+    }
+    closeModal();
+  };
+}
+function confirmModal(txt, onYes, yesLabel) {
+  openModal(`<h2>Confirmar</h2><p>${txt}</p><div class="acts"><button class="btn" id="cNo">Cancelar</button><button class="btn pri" id="cYes">${yesLabel || 'Sí'}</button></div>`);
+  document.getElementById('cNo').onclick = closeModal;
+  document.getElementById('cYes').onclick = () => { closeModal(); onYes(); };
+}
+function alertModal(txt) {
+  openModal(`<h2>RegMed</h2><p>${txt}</p><div class="acts"><button class="btn pri" id="aOk">OK</button></div>`);
+  document.getElementById('aOk').onclick = closeModal;
+}
+
+/* ---------- estadísticas ---------- */
+function stats() {
+  const a = activos(), now = new Date(), hoyK = dayKey(now), t0 = startOfDay(now);
+  const diffs = arr => { const o = []; for (let i = 1; i < arr.length; i++) o.push((arr[i].d - arr[i - 1].d) / 60000); return o; };
+  const avg = x => x.length ? x.reduce((s, v) => s + v, 0) / x.length : null;
+  const hoy = a.filter(r => dayKey(r.d) === hoyK);
+  const h24 = a.filter(r => now - r.d <= 864e5 && r.d <= now);
+  const s = {
+    a, hoy, total: a.length, nHoy: hoy.length, n24: h24.length,
+    intHoy: avg(diffs(hoy)), int24: avg(diffs(h24)), intTot: avg(diffs(a)),
+    nocheHoy: hoy.filter(r => r.d.getHours() < 6).length,
+    last: a.length ? a[a.length - 1] : null, promDia: null, diasCompletos: 0
+  };
+  if (a.length) {
+    const first = startOfDay(a[0].d);
+    const nd = Math.round((t0 - first) / 864e5);
+    if (nd >= 1) { s.diasCompletos = nd; s.promDia = a.filter(r => r.d < t0).length / nd; }
+  }
+  const col = arr => { const c = { oscuro: 0, medio: 0, claro: 0, '': 0 }; arr.forEach(r => { c[COLORES[r.color] ? r.color : '']++; }); return c; };
+  s.colHoy = col(hoy); s.colTot = col(a);
+  return s;
+}
+
+/* ---------- render ---------- */
+function renderAll() { renderHome(); renderResumen(); renderHist(); document.getElementById('cfgTotal').textContent = activos().length; updSync(); }
+
+function renderHome() {
+  const s = stats();
+  document.getElementById('mHoy').textContent = s.nHoy;
+  document.getElementById('m24').textContent = s.n24;
+  document.getElementById('mInt').textContent = fmtMinShort(s.intHoy);
+  if (s.last) {
+    const m = (Date.now() - s.last.d) / 60000;
+    document.getElementById('lastAgo').textContent = m < 1 ? 'recién' : 'hace ' + fmtMin(m);
+    document.getElementById('lastAt').textContent = (dayKey(s.last.d) === dayKey(new Date()) ? 'hoy' : dayLabel(dayKey(s.last.d))) + ' a las ' + hhmm(s.last.d) +
+      (s.last.color ? ' · ' + COLORES[s.last.color].label.toLowerCase() : '');
+  } else {
+    document.getElementById('lastAgo').textContent = 'sin registros';
+    document.getElementById('lastAt').innerHTML = '&nbsp;';
+  }
+}
+
+function colorBar(c) {
+  const tot = c.oscuro + c.medio + c.claro + c[''];
+  if (!tot) return '<div class="empty" style="padding:8px">Sin datos</div>';
+  const seg = (n, hex) => n ? `<div style="width:${n / tot * 100}%;background:${hex}"></div>` : '';
+  return `<div class="bar-color">${seg(c.claro, COLORES.claro.hex)}${seg(c.medio, COLORES.medio.hex)}${seg(c.oscuro, COLORES.oscuro.hex)}${seg(c[''], '#475569')}</div>
+  <div class="legend">
+    <span><i class="dot" style="background:${COLORES.claro.hex}"></i>Claro ${c.claro}</span>
+    <span><i class="dot" style="background:${COLORES.medio.hex}"></i>Medio ${c.medio}</span>
+    <span><i class="dot" style="background:${COLORES.oscuro.hex}"></i>Oscuro ${c.oscuro}</span>
+    <span><i class="dot" style="background:#475569"></i>Sin color ${c['']}</span></div>`;
+}
+
+function barChart(values, labels, opts) {
+  const W = 340, H = 150, padL = 4, padB = 22, padT = 16;
+  const n = values.length, max = Math.max(1, ...values);
+  const bw = (W - padL * 2) / n, gap = Math.min(4, bw * .25);
+  let g = '';
+  values.forEach((v, i) => {
+    const h = v / max * (H - padB - padT), x = padL + i * bw + gap / 2, y = H - padB - h;
+    const hl = opts.hl && opts.hl(i);
+    g += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(bw - gap).toFixed(1)}" height="${Math.max(h, v ? 1 : 0).toFixed(1)}" rx="2" fill="${hl ? '#8fb3d9' : '#5b7fa6'}"/>`;
+    if (v && opts.showVal) g += `<text x="${(x + (bw - gap) / 2).toFixed(1)}" y="${(y - 3).toFixed(1)}" font-size="9" fill="#cbd5e1" text-anchor="middle">${v}</text>`;
+    if (labels[i]) g += `<text x="${(x + (bw - gap) / 2).toFixed(1)}" y="${H - 7}" font-size="9" fill="#64748b" text-anchor="middle">${labels[i]}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img">${g}</svg>`;
+}
+
+function renderResumen() {
+  const s = stats(), el = document.getElementById('resBody');
+  if (!s.total) { el.innerHTML = '<div class="card"><div class="empty">Todavía no hay registros.<br>Tocá REGISTRAR para empezar.</div></div>'; return; }
+  // últimos 14 días
+  const now = new Date(), dias = [], labs = [], keys = [];
+  const byDay = {}; s.a.forEach(r => { const k = dayKey(r.d); byDay[k] = (byDay[k] || 0) + 1; });
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+    const k = dayKey(d); keys.push(k); dias.push(byDay[k] || 0); labs.push(pad(d.getDate()));
+  }
+  // por hora (total histórico)
+  const hrs = new Array(24).fill(0); s.a.forEach(r => hrs[r.d.getHours()]++);
+  const hLabs = hrs.map((_, i) => i % 3 === 0 ? String(i) : '');
+  el.innerHTML = `
+    <div class="card"><h2>Hoy</h2><div class="kpis">
+      <div class="kpi"><div class="v">${s.nHoy}</div><div class="l">veces hoy</div></div>
+      <div class="kpi"><div class="v">${fmtMinShort(s.intHoy)}</div><div class="l">intervalo promedio hoy</div></div>
+      <div class="kpi"><div class="v">${s.n24}</div><div class="l">últimas 24 h</div></div>
+      <div class="kpi"><div class="v">${s.nocheHoy}</div><div class="l">noche (00–06 h)</div></div>
+    </div>
+    <div class="sub-h">Color hoy</div>${colorBar(s.colHoy)}</div>
+
+    <div class="card"><h2>Acumulado</h2><div class="kpis">
+      <div class="kpi"><div class="v">${s.total}</div><div class="l">registros totales</div></div>
+      <div class="kpi"><div class="v">${fmtMinShort(s.intTot)}</div><div class="l">intervalo promedio total</div></div>
+      <div class="kpi"><div class="v">${s.promDia == null ? '—' : s.promDia.toFixed(1)}</div><div class="l">promedio diario${s.diasCompletos ? ' (' + s.diasCompletos + ' día' + (s.diasCompletos > 1 ? 's' : '') + ' completo' + (s.diasCompletos > 1 ? 's' : '') + ')' : ' (falta 1 día completo)'}</div></div>
+      <div class="kpi"><div class="v">${fmtMinShort(s.int24)}</div><div class="l">intervalo últimas 24 h</div></div>
+    </div>
+    <div class="sub-h">Color acumulado</div>${colorBar(s.colTot)}</div>
+
+    <div class="card"><h2>Por día · últimos 14</h2>${barChart(dias, labs, { showVal: true, hl: i => i === 13 })}</div>
+    <div class="card"><h2>Por hora del día · total</h2>${barChart(hrs, hLabs, { showVal: false, hl: i => i === now.getHours() })}</div>`;
+}
+
+function renderHist() {
+  const a = activos(), el = document.getElementById('hisList');
+  if (!a.length) { el.innerHTML = '<div class="empty">Sin registros.</div>'; return; }
+  const prevGap = {}; a.forEach((r, i) => { prevGap[r.id] = i ? (r.d - a[i - 1].d) / 60000 : null; });
+  const groups = {}; a.forEach(r => { const k = dayKey(r.d); (groups[k] = groups[k] || []).push(r); });
+  const pendIds = new Set(queue.map(o => o.rec.id));
+  el.innerHTML = Object.keys(groups).sort().reverse().map(k => {
+    const rows = groups[k].slice().reverse().map(r => `
+      <div class="row">
+        <div class="t">${hhmm(r.d)}</div>
+        <div class="c">${r.color ? `<i class="dot" style="background:${COLORES[r.color].hex}"></i>${COLORES[r.color].label}` : '<span style="color:#475569">sin color</span>'}${r.demo ? '<span class="demo">DEMO</span>' : ''}${pendIds.has(r.id) ? ' ⏳' : ''}</div>
+        <div class="i">${prevGap[r.id] == null ? '' : '+' + fmtMinShort(prevGap[r.id])}</div>
+        <button data-edit="${esc(r.id)}" aria-label="Editar">✎</button>
+        <button data-del="${esc(r.id)}" aria-label="Borrar">🗑</button>
+      </div>`).join('');
+    return `<div class="day"><div class="day-h"><b>${dayLabel(k)}</b><span>${groups[k].length} vez${groups[k].length > 1 ? 'es' : ''}</span></div>${rows}</div>`;
+  }).join('');
+}
+
+/* ---------- export / import ---------- */
+function download(name, content, type) {
+  const blob = new Blob([content], { type }); const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1000);
+}
+const stamp = () => { const d = new Date(); return d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + '_' + pad(d.getHours()) + pad(d.getMinutes()); };
+function exportCsv() {
+  const a = activos();
+  if (!a.length) { alertModal('No hay registros para exportar.'); return; }
+  const lines = ['Fecha;Hora;Color;Intervalo_min;FechaHora_ISO'];
+  a.forEach((r, i) => lines.push([dayKey(r.d), hhmm(r.d), r.color ? COLORES[r.color].label : '', i ? Math.round((r.d - a[i - 1].d) / 60000) : '', r.fechaHora].join(';')));
+  download('regmed_' + stamp() + '.csv', '\uFEFF' + lines.join('\r\n'), 'text/csv;charset=utf-8');
+}
+function exportJson() {
+  const data = { app: 'regmed', version: APP_VERSION, exportado: isoLocal(new Date()), registros: Object.values(recs) };
+  download('regmed_backup_' + stamp() + '.json', JSON.stringify(data, null, 2), 'application/json');
+}
+function importJson(file) {
+  const fr = new FileReader();
+  fr.onload = () => {
+    try {
+      const data = JSON.parse(fr.result);
+      const list = (data.registros || []).filter(r => r && r.id && r.fechaHora && r.estado !== 'borrado' && !recs[r.id]);
+      if (!list.length) { alertModal('No hay registros nuevos en ese backup.'); return; }
+      confirmModal(`Se van a importar <b>${list.length}</b> registros nuevos y se enviarán al Sheet.`, () => {
+        const mod = isoLocal(new Date());
+        list.forEach(r => { const op = { op: 'add', rec: { id: r.id, fechaHora: r.fechaHora, color: COLORES[r.color] ? r.color : '', modificado: mod } }; applyOp(recs, op); queue.push(op); });
+        save(); renderAll(); scheduleFlush(300);
+      }, 'Importar');
+    } catch (e) { alertModal('Archivo inválido.'); }
+  };
+  fr.readAsText(file);
+}
+
+/* ---------- clave ---------- */
+function buildBoxes() {
+  const c = document.getElementById('claveBoxes');
+  c.innerHTML = Array.from({ length: 8 }, (_, i) => `<input maxlength="1" inputmode="text" autocapitalize="characters" autocomplete="off" data-i="${i}">`).join('');
+  const ins = [...c.querySelectorAll('input')];
+  ins.forEach((inp, i) => {
+    inp.addEventListener('input', () => {
+      inp.value = inp.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(-1);
+      if (inp.value && i < 7) ins[i + 1].focus();
+      if (ins.every(x => x.value)) validarClave();
+    });
+    inp.addEventListener('keydown', e => { if (e.key === 'Backspace' && !inp.value && i > 0) ins[i - 1].focus(); });
+    inp.addEventListener('paste', e => {
+      e.preventDefault();
+      const t = (e.clipboardData.getData('text') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
+      t.split('').forEach((ch, k) => { if (ins[k]) ins[k].value = ch; });
+      if (t.length === 8) validarClave(); else if (ins[t.length]) ins[t.length].focus();
+    });
+  });
+}
+function pedirClave(msg) {
+  const scr = document.getElementById('claveScreen');
+  if (!scr.hidden) return;
+  buildBoxes(); document.getElementById('claveMsg').textContent = msg || '';
+  scr.hidden = false; setTimeout(() => document.querySelector('#claveBoxes input').focus(), 100);
+}
+let validando = false;
+async function validarClave() {
+  if (validando) return;
+  const v = [...document.querySelectorAll('#claveBoxes input')].map(x => x.value).join('');
+  const msg = document.getElementById('claveMsg');
+  if (v.length !== 8) { msg.textContent = 'Faltan caracteres.'; return; }
+  validando = true; msg.style.color = 'var(--tx2)'; msg.textContent = 'Validando…';
+  try {
+    const res = await fetch(GAS_URL + '?action=ping&clave=' + encodeURIComponent(v));
+    const j = await res.json();
+    if (j.ok) {
+      lsSet(LS.clave, v); document.getElementById('claveScreen').hidden = true; syncErr = null;
+      updClaveCfg(); await pull(); flush();
+    } else { msg.style.color = 'var(--err)'; msg.textContent = 'Clave incorrecta.'; }
+  } catch (e) { msg.style.color = 'var(--err)'; msg.textContent = 'Sin conexión. Probá de nuevo.'; }
+  validando = false;
+}
+function updClaveCfg() { const c = clave(); document.getElementById('cfgClave').textContent = c ? c.slice(0, 2) + '••••' + c.slice(-2) : '—'; }
+
+/* ---------- eventos ---------- */
+function setTab(t) {
+  document.querySelectorAll('.tab').forEach(s => s.classList.toggle('active', s.id === 'tab-' + t));
+  document.querySelectorAll('nav.bnav button').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll('nav.bnav button').forEach(b => b.onclick = () => setTab(b.dataset.tab));
+document.getElementById('btnReg').onclick = registrar;
+document.querySelectorAll('[data-manual]').forEach(b => b.onclick = () => modalRegistro(null));
+document.getElementById('toastChips').onclick = e => {
+  const b = e.target.closest('.chip'); if (!b || !toastId) return;
+  const cur = recs[toastId] ? recs[toastId].color : '';
+  const c = cur === b.dataset.color ? '' : b.dataset.color;
+  setColor(toastId, c, FLUSH_DELAY_MS);
+  document.getElementById('toastChips').innerHTML = chipsHTML(c);
+};
+document.getElementById('btnUndo').onclick = () => { if (toastId) deshacer(toastId); hideToast(); };
+document.getElementById('hisList').onclick = e => {
+  const ed = e.target.closest('[data-edit]'), dl = e.target.closest('[data-del]');
+  if (ed && recs[ed.dataset.edit]) modalRegistro(recs[ed.dataset.edit]);
+  if (dl && recs[dl.dataset.del]) {
+    const r = recs[dl.dataset.del], d = new Date(r.fechaHora);
+    confirmModal(`¿Borrar el registro de las <b>${hhmm(d)}</b> (${dayLabel(dayKey(d))})?`, () => deshacer(r.id), 'Borrar');
+  }
+};
+document.getElementById('modal').onclick = e => { if (e.target.id === 'modal') closeModal(); };
+document.getElementById('btnSync').onclick = async () => { syncErr = null; await flush(); await pull(); };
+document.getElementById('btnCsv').onclick = exportCsv;
+document.getElementById('btnJson').onclick = exportJson;
+document.getElementById('btnImport').onclick = () => document.getElementById('fileImport').click();
+document.getElementById('fileImport').onchange = e => { if (e.target.files[0]) importJson(e.target.files[0]); e.target.value = ''; };
+document.getElementById('btnOlvidar').onclick = () => confirmModal('Se borra la clave de este celular (los registros y pendientes se conservan) y se pide la nueva.', () => { lsDel(LS.clave); updClaveCfg(); pedirClave(''); }, 'Cambiar');
+document.getElementById('btnClave').onclick = validarClave;
+window.addEventListener('online', () => { syncErr = null; flush(); });
+document.addEventListener('visibilitychange', () => { if (!document.hidden && clave()) { renderAll(); pull().then(flush); } });
+setInterval(() => { renderHome(); if (queue.length && !flushing && clave()) flush(); }, RETRY_MS);
+setInterval(() => { if (!document.hidden && clave() && !queue.length) pull(); }, PULL_MS);
+
+/* ---------- instalación PWA (patrón estándar) ---------- */
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; document.getElementById('btnInstall').hidden = false; });
+document.getElementById('btnInstall').onclick = async () => {
+  if (!deferredPrompt) return; deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null;
+  document.getElementById('btnInstall').hidden = true;
+};
+window.addEventListener('appinstalled', () => { document.getElementById('btnInstall').hidden = true; });
+if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+
+/* ---------- init ---------- */
+document.getElementById('hdrVer').textContent = 'v' + APP_VERSION;
+document.getElementById('cfgVer').textContent = 'v' + APP_VERSION;
+updClaveCfg(); renderAll();
+if (!clave()) pedirClave('');
+else { pull().then(flush); }
+</script>
+</body>
+</html>
